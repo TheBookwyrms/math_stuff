@@ -75,28 +75,3 @@ as_one = "".join([str(i) for i in equation])
 print(as_one)
 
 print()
-
-
-
-
-
-
-
-def test():
-    parent = sin(a)
-
-    path = collections.deque(range(1))
-    equation = collections.deque(range(0))
-
-    def getter(path, equation, parent):
-        if type(parent.args) == dict:
-            if parent == path[-1]:
-                pass
-            else:
-                print(len(parent.children))
-        else:
-            equation.append(parent.args[1])
-        
-        return path, equation, parent
-
-    path, equation, parent = getter(path, equation, parent)
