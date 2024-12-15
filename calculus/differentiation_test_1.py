@@ -5,7 +5,8 @@ a = node(operations.const, ("const", 5))
 b = node(operations.const, ("const", -7))
 b = node(operations.var, ("var", "x"))
 
-p = a/b+sin(a+a)
+p = a/b+sin(a+(a/(a*b)))
+p = ln(a)
 #p = a/b+sin(a+a)
 
 print()
@@ -47,10 +48,20 @@ def perform_differentiation(path, equation, can_differentiate, parent: node):
     #print(parent.args, parent.has_var)
 
     if parent not in path:
-        if (parent.args[0] == "const") or (parent.args[0] == "var"):
+        if parent.args[0] == "const":
             #print(parent.args, parent.has_var, 1.1, x)
             # case when parent is "const" or "var"
             equation.append(parent.args[1])
+            path.append(parent)
+            
+        if parent.args[0] == "var":
+            #print(parent.args, parent.has_var, 1.1, x)
+            # case when parent is "const" or "var"
+            equation.append("(")
+            equation.append(parent.args[1])
+            equation.append("*")
+            equation.append(parent.args[1]+"'")
+            equation.append(")")
             path.append(parent)
 
         elif parent.length(parent) == -1:
@@ -112,10 +123,19 @@ def perform_differentiation(path, equation, can_differentiate, parent: node):
             pass
 
     elif parent in path:
-        if (parent.args[0] == "const") or (parent.args[0] == "var"):
+        if parent.args[0] == "const":
             #print(parent.args, parent.has_var, 2.1, x)
             # case when parent is "const" or "var"
             equation.append(parent.args[1])
+            
+        if parent.args[0] == "var":
+            #print(parent.args, parent.has_var, 2.1, x)
+            # case when parent is "const" or "var"
+            equation.append("(")
+            equation.append(parent.args[1])
+            equation.append("*")
+            equation.append(parent.args[1]+"'")
+            equation.append(")")
         elif parent.length(parent) == -1:
             #print(parent.args, parent.has_var, 2.2, x)
             pass # intentional
@@ -162,7 +182,7 @@ def perform_differentiation(path, equation, can_differentiate, parent: node):
 
 def differentiate(tree):
     path = collections.deque(range(1))
-    equation = collections.deque(range(0))
+    equation = collections.deque([0, 0, 0])
     can_differentiate = True
     path, equation, can_differentiate = perform_differentiation(path, equation, can_differentiate, tree)
     as_one = "".join([str(i) for i in equation])
