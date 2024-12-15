@@ -1,12 +1,12 @@
 from tree_builder import *
 
 a = node(operations.const, ("const", 5))
-b = node(operations.const, ("const", -7))
+#b = node(operations.const, ("const", -7))
+b = node(operations.var, ("var", "x"))
 
 p = a/b+sin(a+a)*b
 
-
-print()
+#print()
 
 reverser = {
     8: "+",
@@ -31,8 +31,6 @@ reverser = {
     42: "ceil",
     45: "abs"}
 
-path = collections.deque(range(1))
-equation = collections.deque(range(0))
 
 def maker(path, equation, parent: node):
     if parent not in path:
@@ -69,9 +67,16 @@ def maker(path, equation, parent: node):
     return path, equation
 
 
-path, equation = maker(path, equation, p)
-print(equation)
-as_one = "".join([str(i) for i in equation])
-print(as_one)
 
-print()
+def call_maker(tree):
+    path = collections.deque(range(1))
+    equation = collections.deque(range(0))
+    path, equation = maker(path, equation, tree)
+    as_one = "".join([str(i) for i in equation])
+
+    return as_one
+
+
+#print(call_maker(p))
+
+#print()

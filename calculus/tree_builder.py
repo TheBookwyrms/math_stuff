@@ -43,6 +43,25 @@ class node:
         self.op = type_
         self.args = details
         self.children = children
+        self.has_var = True
+
+        if self.length(self) == 0:
+            self.is_differentiable = True
+            if self.args[0] == "const":
+                self.has_var = False
+        elif self.length(self) == -1:
+            self.is_differentiable = self.children.is_differentiable
+            if (self.children.args[0] != "var"):
+                self.has_var = False
+        elif self.length(self) == 2:
+            self.is_differentiable = self.children[0].is_differentiable and self.children[1].is_differentiable
+            if (self.op == 10) or (self.op == 11):
+                a = self.children[0].args[0] == "var"
+                b = self.children[1].args[0] == "var"
+                c = a or b
+                self.has_var = c
+            else:
+                self.has_var = False
 
     def __len__(self):
         x = 0
@@ -101,6 +120,8 @@ class node:
         new_parent = node(operations.abs, details=
             ("operation_type", operations.abs)
         , children=(self))
+
+        self.is_differentiable = False
 
         return new_parent
 
@@ -200,11 +221,15 @@ def floor(self):
         ("operation_type", operations.floor)
     , children=(self))
 
+    self.is_differentiable = False
+
     return new_parent
 
 def ceil(self):
     new_parent = node(operations.ceil, details=
         ("operation_type", operations.ceil)
     , children=(self))
+
+    self.is_differentiable = False
 
     return new_parent
