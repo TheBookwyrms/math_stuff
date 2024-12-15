@@ -35,11 +35,11 @@ reverser = {
     45: "abs"}
 
 
-x = 0
+#x = 0
 
 def perform_differentiation(path, equation, can_differentiate, parent: node):
-    global x
-    x += 1
+    #global x
+    #x += 1
 
     if parent.is_differentiable == False:
         can_differentiate = False
