@@ -3,7 +3,7 @@ from tree_builder import *
 a = node(operations.const, ("const", 5))
 b = node(operations.const, ("const", -7))
 
-p = sin(a+a)*b
+p = a/b+sin(a+a)*b
 
 
 print()
@@ -27,6 +27,8 @@ reverser = {
     34: "asec",
     35: "acsc",
     36: "atan",
+    41: "floor",
+    42: "ceil",
     45: "abs"}
 
 path = collections.deque(range(1))
@@ -38,8 +40,6 @@ def maker(path, equation, parent: node):
             # case when parent is "const" or "var"
             equation.append(parent.args[1])
             path.append(parent)
-            #path, equation = maker(path, equation, parent)
-        #     pass
         elif parent.length(parent) == -1:
             equation.append(reverser[parent.args[1]])
             equation.append("(")
@@ -48,20 +48,20 @@ def maker(path, equation, parent: node):
             path.append(parent)
         elif len(parent) == 2:
             # case where this is on operation containing two sub-nodes
+            equation.append("(")
             path, equation = maker(path, equation, parent.children[0])
             equation.append(reverser[parent.args[1]])
-            #equation.append(parent.children[0].args[1])
             path.append(parent)
             path, equation = maker(path, equation, parent)
+            equation.append(")")
             pass
     elif parent in path:
         if (parent.children == []):
             # case when parent is "const" or "var"
             equation.append(parent.args[1])
             path.append(parent)
-            #path, equation = maker(path, equation, parent)
         elif parent.length(parent) == -1:
-            pass
+            pass # intentional
         elif len(parent) == 2:
             # case where this is on operation containing two sub-nodes
             path, equation = maker(path, equation, parent.children[1])

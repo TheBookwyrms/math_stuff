@@ -27,6 +27,9 @@ class operations:
     acsc = 35
     acot = 36
 
+    floor = 41
+    ceil = 42
+
     abs = 45
 
 
@@ -188,6 +191,20 @@ def acsc(self):
 def acot(self):
     new_parent = node(operations.acot, details=
         ("operation_type", operations.acot)
+    , children=(self))
+
+    return new_parent
+
+def floor(self):
+    new_parent = node(operations.floor, details=
+        ("operation_type", operations.floor)
+    , children=(self))
+
+    return new_parent
+
+def ceil(self):
+    new_parent = node(operations.ceil, details=
+        ("operation_type", operations.ceil)
     , children=(self))
 
     return new_parent
