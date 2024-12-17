@@ -1,4 +1,4 @@
-from tree_builder import *
+from tree_builder_2 import *
 
 a = node(operations.const, ("const", 5))
 #b = node(operations.const, ("const", -7))

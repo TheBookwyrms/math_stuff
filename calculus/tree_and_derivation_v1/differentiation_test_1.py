@@ -1,4 +1,4 @@
-from tree_builder import *
+from tree_builder_1 import *
 from tree_decoder_test_3 import *
 
 a = node(operations.const, ("const", 5))
@@ -7,6 +7,7 @@ b = node(operations.var, ("var", "x"))
 
 p = a/b+sin(a+(a/(a*b)))
 p = ln(a)
+p = sin(a+b)
 #p = a/b+sin(a+a)
 
 print()
@@ -57,11 +58,11 @@ def perform_differentiation(path, equation, can_differentiate, parent: node):
         if parent.args[0] == "var":
             #print(parent.args, parent.has_var, 1.1, x)
             # case when parent is "const" or "var"
-            equation.append("(")
+            #equation.append("(")
             equation.append(parent.args[1])
+            equation.append(")")
             equation.append("*")
             equation.append(parent.args[1]+"'")
-            equation.append(")")
             path.append(parent)
 
         elif parent.length(parent) == -1:
@@ -131,11 +132,12 @@ def perform_differentiation(path, equation, can_differentiate, parent: node):
         if parent.args[0] == "var":
             #print(parent.args, parent.has_var, 2.1, x)
             # case when parent is "const" or "var"
-            equation.append("(")
+            #equation.append("(")
             equation.append(parent.args[1])
+            equation.append(")")
+            equation.append(")")
             equation.append("*")
             equation.append(parent.args[1]+"'")
-            equation.append(")")
         elif parent.length(parent) == -1:
             #print(parent.args, parent.has_var, 2.2, x)
             pass # intentional
@@ -182,7 +184,7 @@ def perform_differentiation(path, equation, can_differentiate, parent: node):
 
 def differentiate(tree):
     path = collections.deque(range(1))
-    equation = collections.deque([0, 0, 0])
+    equation = collections.deque([0, 0, "+"])
     can_differentiate = True
     path, equation, can_differentiate = perform_differentiation(path, equation, can_differentiate, tree)
     as_one = "".join([str(i) for i in equation])
