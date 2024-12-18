@@ -1,14 +1,23 @@
 from tree_builder_2 import *
-from tree_decoder_test_2 import *
 
 
 def derive_operation(parent: node):
     if parent.op == "operation_type":
         match parent.arg:
             case operations.add:
-                return parent
+                left = derive_operation(parent.children[0])
+                right = derive_operation(parent.children[1])
+
+                new_parent = node("operation_type", operations.add, children=(left, right))
+
+                return new_parent
             case operations.sub:
-                return parent
+                left = derive_operation(parent.children[0])
+                right = derive_operation(parent.children[1])
+
+                new_parent = node("operation_type", operations.sub, children=(left, right))
+
+                return new_parent
             case operations.mult:
                 a = parent.children[0]
                 b = parent.children[1]
@@ -90,7 +99,7 @@ def derive_operation(parent: node):
                 pass
             case 36:
                 pass
-    elif parent.op == "const":
+    elif parent.op == ("const" or "void"):
         a = node("void", None)
         return a
     elif parent.op == "var":

@@ -38,13 +38,13 @@ def maker(path, equation, parent: node):
             # case when parent is "const" or "var"
             equation.append(parent.arg)
             path.append(parent)
-        elif parent.length(parent) == -1:
+        elif parent.length() == -1:
             equation.append(reverser[parent.arg])
             equation.append("(")
             path, equation = maker(path, equation, parent.children)
             equation.append(")")
             path.append(parent)
-        elif len(parent) == 2:
+        elif parent.length() == 2:
             # case where this is on operation containing two sub-nodes
             equation.append("(")
             path, equation = maker(path, equation, parent.children[0])
@@ -58,11 +58,17 @@ def maker(path, equation, parent: node):
             # case when parent is "const" or "var"
             equation.append(parent.arg)
             path.append(parent)
-        elif parent.length(parent) == -1:
+        elif parent.length() == -1:
             pass # intentional
-        elif len(parent) == 2:
+        elif parent.length() == 2:
             # case where this is on operation containing two sub-nodes
+            if parent.arg == 11:
+                equation.append("aaaa")
             path, equation = maker(path, equation, parent.children[1])
+            if parent.arg == 11:
+                equation.append("bbbb")
+    else:
+        pass
     
     return path, equation
 
