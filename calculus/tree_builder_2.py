@@ -85,7 +85,7 @@ class node:
             for child in self.children:
                 x += 1
         except:
-            x = -1
+            x = 0
         return x
     
 
@@ -119,13 +119,16 @@ class node:
                     return f'{self.arg}'
                 elif self.op == "void":
                     return "None"
+                elif self.op == "operation_type":
+                    return f'{reverser[self.arg]}({self.children.arg})'
                 else:
-                    raise ValueError("3thrd case case 0")
+                    raise ValueError("3thrd case case 0", self.op, self.arg)
             case 1:
                 return f'{reverser[self.arg]}({str(self.children)})'
             case 2:
                 return f'({str(self.children[0])}{reverser[self.arg]}{str(self.children[1])})'
-        raise ValueError("error in case")
+        #print(self.length())
+        raise ValueError("error in case", self.length())
 
 
     def __add__(self, sibling):

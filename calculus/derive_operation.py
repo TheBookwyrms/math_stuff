@@ -71,10 +71,29 @@ def derive_operation(parent: node):
 
                     return with_u_prime
                 else:
-                    pass # TODO logarithmic differentiation
-                    raise ValueError("logarithmic differentiation not implemented yet")
+                    f_x = parent
+                    g_x = parent.children[0]
+                    h_x = parent.children[1]
+                    g_prime = derive_operation(g_x)
+                    h_prime = derive_operation(h_x)
+
+                    ln_g_x = node("operation_type", operations.ln, children=(g_x))
+                    ln_g_x_prime = derive_operation(ln_g_x)
+
+                    term_1 = node("operation_type", operations.mult, children=(h_prime, ln_g_x))
+                    term_2 = node("operation_type", operations.mult, children=(h_x, ln_g_x_prime))
+                    add = term_1 + term_2
+
+                    final = node("operation_type", operations.mult, children=(f_x, add))
+
+                    return final
             case 15:
-                pass
+                u = parent.children
+                u_prime = derive_operation(u)
+
+                div = u_prime/u
+
+                return div
             case 21:
                 pass
             case 22:
