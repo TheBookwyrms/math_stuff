@@ -1,8 +1,8 @@
 from tree_builder_2 import *
 
-a = node(operations.const, ("const", 5))
-#b = node(operations.const, ("const", -7))
-b = node(operations.var, ("var", "x"))
+a = node("const", 5)
+#b = node("const", -7)
+b = node("var", "x")
 
 p = a/b+sin(a+a)*b
 
@@ -36,10 +36,10 @@ def maker(path, equation, parent: node):
     if parent not in path:
         if (parent.children == []):
             # case when parent is "const" or "var"
-            equation.append(parent.args[1])
+            equation.append(parent.arg)
             path.append(parent)
         elif parent.length(parent) == -1:
-            equation.append(reverser[parent.args[1]])
+            equation.append(reverser[parent.arg])
             equation.append("(")
             path, equation = maker(path, equation, parent.children)
             equation.append(")")
@@ -48,7 +48,7 @@ def maker(path, equation, parent: node):
             # case where this is on operation containing two sub-nodes
             equation.append("(")
             path, equation = maker(path, equation, parent.children[0])
-            equation.append(reverser[parent.args[1]])
+            equation.append(reverser[parent.arg])
             path.append(parent)
             path, equation = maker(path, equation, parent)
             equation.append(")")
@@ -56,7 +56,7 @@ def maker(path, equation, parent: node):
     elif parent in path:
         if (parent.children == []):
             # case when parent is "const" or "var"
-            equation.append(parent.args[1])
+            equation.append(parent.arg)
             path.append(parent)
         elif parent.length(parent) == -1:
             pass # intentional

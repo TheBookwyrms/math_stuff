@@ -2,19 +2,17 @@ from tree_builder_2 import *
 from tree_decoder_test_2 import *
 from derive_operation import *
 
-a = node(operations.const, ("const", 5))
-b = node(operations.const, ("const", -7))
-b = node(operations.var, ("var", "x"))
-
-p = a/b+sin(a+(a/(a*b)))
-p = ln(a)
-p = sin(a+b)
-#p = a/b+sin(a+a)
-
+aao = node("const", 1)
+aat = node("const", 2)
+aath = node("const", 3)
+aaf = node("const", 4)
+aafi = node("const", 5)
+aa_s = node("const", -7)
+aax = node("var", "x")
 
 
-
-t = derive_operation(((a*b)*(b**a))**a)
+ch = (aaf*(aax**aat))/(aath*(aax**aath))
+t = derive_operation(ch)
 
 print()
 print(call_maker(t), "test")
@@ -48,4 +46,4 @@ def derive(tree):
 
     #return as_one
     pass
-print(call_maker(p))
+#print(call_maker(p))
