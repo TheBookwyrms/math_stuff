@@ -1,4 +1,4 @@
-from tree_builder_2 import *
+from math.calculus.v2.tree_builder_2 import *
 
 def compress_Nones(tree: node):
     match tree.length():
@@ -21,5 +21,9 @@ def compress_Nones(tree: node):
                     tree.op = "void"
                     tree.arg = None
                     tree.children = []
+                elif (tree.children[0].op == "void") and (tree.children[1].op != "void"):
+                    tree = tree.children[1]
+                elif (tree.children[0].op != "void") and (tree.children[1].op == "void"):
+                    tree = tree.children[0]
             return tree
     raise ValueError("error")
