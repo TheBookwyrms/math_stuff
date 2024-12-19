@@ -1,6 +1,6 @@
-from math.calculus.v2.tree_builder_2 import *
-from math.calculus.v2.derive_operation import *
-from math.calculus.v2.simplifications_compressions import *
+from math_stuff.calculus.v2.tree_builder_2 import *
+from math_stuff.calculus.v2.derive_operation import *
+from math_stuff.calculus.v2.simplifications_compressions import *
 
 
 def run():
