@@ -1,5 +1,6 @@
 from tree_builder_2 import *
 from derive_operation import *
+from simplifications_compressions import *
 
 o = node("const", 1)
 t = node("const", 2)
@@ -12,13 +13,15 @@ x = node("var", "x")
 ch = o/(th*(x**th))
 ch = (th*(x**t))/(x*x*x*t)
 ch = x**(ln(x))
+ch = o*t+(x**t)
 #ch = (aax*aax*aax*aat)
 #ch = ch+aafi
 t = derive_operation(ch)
 
-print()
-print(ch)
-print()
-print(t)
 
+
+print()
+print(f'original expression:    {ch}')
+print(f'derived expression:     {t}')
+print(f'compressed expression:  {compress_Nones(t)}')
 print()

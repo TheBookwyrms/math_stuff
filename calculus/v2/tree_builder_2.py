@@ -45,39 +45,7 @@ class node:
         self.op = type_
         self.arg = details
         self.children = children
-        self.has_var = True
-
-        # if self.length() == 0:
-        #     self.is_differentiable = True
-        #     if self.op == "const":
-        #         self.has_var = False
-        # elif self.length() == -1:
-        #     self.is_differentiable = self.children.is_differentiable
-        #     if (self.children.op != "var"):
-        #         self.has_var = False
-        # elif self.length() == 2:
-        #     try:
-        #         if (self.children[0].op != ("const" or "var")) and (self.children[1].op != ("const" or "var")):
-        #             self.is_differentiable = self.children[0].is_differentiable and self.children[1].is_differentiable
-        #         if (self.children[0].op == ("const" or "var")) and (self.children[1].op != ("const" or "var")):
-        #             self.is_differentiable = self.children[1].is_differentiable
-        #         if (self.children[0].op != ("const" or "var")) and (self.children[1].op == ("const" or "var")):
-        #             self.is_differentiable = self.children[0].is_differentiable
-        #         if (self.children[0].op == ("const" or "var")) and (self.children[1].op == ("const" or "var")):
-        #             self.is_differentiable = True
-        #         if (self.op == 10) or (self.op == 11):
-        #             a = self.children[0].has_var
-        #             b = self.children[1].has_var
-        #             c = a or b
-        #             self.has_var = c
-        #             if (self.has_var) and ((self.op == "operation_type") and (self.arg == (('operation_type', 10) or ('operation_type', 11)))):
-        #                 self.children[0].has_var = True
-        #                 self.children[1].has_var = True
-        #     except:
-        #         self.is_differentiable = True
-        #     else:
-        #         self.has_var = False
-
+        
    
     def length(self):
         x = 0
