@@ -4,19 +4,20 @@ from math_stuff.calculus.v2.simplifications_compressions import *
 
 
 def run():
-    o = node("const", 1)
-    ono = node("const", 1)
-    t = node("const", 2)
-    th = node("const", 3)
-    f = node("const", 4)
-    fi = node("const", 5)
-    _s = node("const", -7)
-    x = node("var", "x")
-    x_p = node("var", "x'")
+    o = node(operations.const, 1)
+    ono = node(operations.const, 1)
+    t = node(operations.const, 2)
+    th = node(operations.const, 3)
+    f = node(operations.const, 4)
+    fi = node(operations.const, 5)
+    _s = node(operations.const, -7)
+    x = node(operations.var, "x")
+    x_p = node(operations.var, "x'")
 
     ch = o/(th*(x**th))
     ch = (th*(x**t))/(x*x*x*t)
-    ch = x**t+x**t
+    ch = x**t+x**t+x**t+x**t
+    ch = sec(csc(x**x))
     #ch = ln(t)
     #ch = x**(ln(x))
     #ch = o*t+(x**t)

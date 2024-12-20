@@ -5,9 +5,9 @@ def delete_Nones(tree: node):
         case 0:
             return tree
         case 1:
-            if tree.op == "operation_type":
-                if tree.children.op == "void":
-                    tree.op = "void"
+            if tree.op == operations.operation:
+                if tree.children.op == operations.void:
+                    tree.op = operations.void
                     tree.arg = None
                     tree.children = []
             return tree
@@ -16,19 +16,19 @@ def delete_Nones(tree: node):
                 delete_Nones(tree.children[0]),
                 delete_Nones(tree.children[1])
             ))
-            if (tree.op == "operation_type") and ((tree.arg == 10) or (tree.arg == 11)):
-                if (tree.children[0].op == "void") or (tree.children[1].op == "void"):
-                    tree.op = "void"
+            if (tree.op == operations.operation) and ((tree.arg == 10) or (tree.arg == 11)):
+                if (tree.children[0].op == operations.void) or (tree.children[1].op == operations.void):
+                    tree.op = operations.void
                     tree.arg = None
                     tree.children = []
-            if (tree.op == "operation_type") and ((tree.arg == 8) or (tree.arg == 9)):
-                if (tree.children[0].op == "void") and (tree.children[1].op == "void"):
-                    tree.op = "void"
+            if (tree.op == operations.operation) and ((tree.arg == 8) or (tree.arg == 9)):
+                if (tree.children[0].op == operations.void) and (tree.children[1].op == operations.void):
+                    tree.op = operations.void
                     tree.arg = None
                     tree.children = []
-                elif (tree.children[0].op == "void") and (tree.children[1].op != "void"):
+                elif (tree.children[0].op == operations.void) and (tree.children[1].op != operations.void):
                     tree = tree.children[1]
-                elif (tree.children[0].op != "void") and (tree.children[1].op == "void"):
+                elif (tree.children[0].op != operations.void) and (tree.children[1].op == operations.void):
                     tree = tree.children[0]
             return tree
     raise ValueError("error")
@@ -42,15 +42,15 @@ def compress_duplicate_additions_or_subtractions(tree: node):
             tree = compress_duplicate_additions_or_subtractions(tree)
             return tree
         case 2:
-            if (tree.op == "operation_type") and ((tree.arg == 8) or (tree.arg == 9)):
+            if (tree.op == operations.operation) and ((tree.arg == 8) or (tree.arg == 9)):
                 new_tree_0 = compress_duplicate_additions_or_subtractions(tree.children[0])
                 new_tree_1 = compress_duplicate_additions_or_subtractions(tree.children[1])
 
-                tree = node("operation_type", tree.arg, children=(new_tree_0, new_tree_1))
+                tree = node(operations.operation, tree.arg, children=(new_tree_0, new_tree_1))
 
                 if is_equal(tree.children[0], tree.children[1]):
-                    two = node("const", 2)
-                    tree = node("operation_type", operations.mult, children=(two, tree.children[0]))
+                    two = node(operations.const, 2)
+                    tree = node(operations.operation, operations.mult, children=(two, tree.children[0]))
             return tree
     raise ValueError("case error")
 
