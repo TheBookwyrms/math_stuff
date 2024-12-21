@@ -24,9 +24,8 @@ def run():
     #ch = (x*x*x*t)
     #ch = ch+fi
     t = derive_operation(ch)
-
     print()
-    print(f'{colourer('30')}original expression{colourer(0)}:       {ch}') # remove 3 spaces later
+    print(f'{colourer('07')}original expression{colourer(0)}:       {ch}') # remove 3 spaces later
     all_simplifications_and_compressions(t)
     #print(f'derived expression:     {t}')
     #print(f'compressed expression:  {all_simplifications_and_compressions(t)}')

@@ -132,21 +132,46 @@ def compress_to_power_one(tree: node):
             child_0 = compress_to_power_one(child_0)
             child_1 = compress_to_power_one(child_1)
             tree = node(operations.operation, tree.arg, children=(child_0, child_1))
+            one = node(operations.const, 1)
+
 
             if ((child_0.op == operations.operation) and (child_0.arg == operations.pow)) and not ((child_1.op == operations.operation) and (child_1.arg == operations.pow)):
-                if (child_0.children[1].op == operations.const) and (child_0.children[1].arg == 1):
+                if is_equal(child_0.children[1], one):
                     tree = node(operations.operation, tree.arg, children=(child_0.children[0], child_1))
             elif (child_1.op == operations.operation) and (child_1.arg == operations.pow) and not ((child_0.op == operations.operation) and (child_0.arg == operations.pow)):
-                if (child_1.children[1].op == operations.const) and (child_1.children[1].arg == 1):
+                if is_equal(child_1.children[1], one):
                     tree = node(operations.operation, tree.arg, children=(child_0, child_1.children[0]))
             elif ((child_0.op == operations.operation) and (child_0.arg == operations.pow)) and ((child_1.op == operations.operation) and (child_1.arg == operations.pow)):
-                if ((child_0.children[1].op == operations.const) and (child_0.children[1].arg == 1)) and not ((child_1.children[1].op == operations.const) and (child_1.children[1].arg == 1)):
+                if (is_equal(child_0.children[1], one)) and not (is_equal(child_1.children[1], one)):
                     tree = node(operations.operation, tree.arg, children=(child_0.children[0], child_1))
-                elif ((child_1.children[1].op == operations.const) and (child_1.children[1].arg == 1)) and not ((child_0.children[1].op == operations.const) and (child_0.children[1].arg == 1)):
+                elif (is_equal(child_1.children[1], one)) and not (is_equal(child_0.children[1], one)):
                     tree = node(operations.operation, tree.arg, children=(child_0, child_1.children[0]))
-                elif ((child_1.children[1].op == operations.const) and (child_1.children[1].arg == 1)) and ((child_0.children[1].op == operations.const) and (child_0.children[1].arg == 1)):
+                elif (is_equal(child_1.children[1], one)) and (is_equal(child_0.children[1], one)):
                     tree = node(operations.operation, tree.arg, children=(child_0.children[0], child_1.children[0]))
             
+    return tree
+
+def remove_mult_div_by_one(tree: node):
+    match tree.length():
+        case 0:
+            return tree
+        case 1:
+            tree = remove_mult_div_by_one(tree)
+            return tree
+        case 2:
+            child_0 = tree.children[0]
+            child_1 = tree.children[1]
+            child_0 = remove_mult_div_by_one(child_0)
+            child_1 = remove_mult_div_by_one(child_1)
+            tree = node(operations.operation, tree.arg, children=(child_0, child_1))
+            one = node(operations.const, 1)
+            
+            if (tree.op == operations.operation):
+                if (tree.arg == operations.mult) or (tree.arg == operations.div):
+                    if is_equal(tree.children[0], one):
+                        return tree.children[1]
+                    elif is_equal(tree.children[1], one):
+                        return tree.children[0]            
     return tree
 
 
@@ -182,16 +207,19 @@ def compress_constants(tree: node):
     return tree
 
 
+
 def all_simplifications_and_compressions(tree: node):
-    print(f'{colourer('31')}derived expression{colourer(0)}:        {tree}')
+    print(f'{colourer('04')}derived expression{colourer(0)}:        {tree}')
     tree = delete_Nones(tree)
-    print(f'{colourer('35')}compressed Nones{colourer(0)}:          {tree}')
+    print(f'{colourer('31')}compressed Nones{colourer(0)}:          {tree}')
     tree = compress_addition(tree)
-    print(f'{colourer('34')}compressed additions{colourer(0)}:      {tree}')
+    print(f'{colourer('35')}compressed additions{colourer(0)}:      {tree}')
     tree = compress_subtraction(tree)
-    print(f'{colourer('36')}compressed subtractions{colourer(0)}:   {tree}')
+    print(f'{colourer('34')}compressed subtractions{colourer(0)}:   {tree}')
     tree = compress_constants(tree)
-    print(f'{colourer('33')}compressed constants{colourer(0)}:      {tree}')
+    print(f'{colourer('36')}compressed constants{colourer(0)}:      {tree}')
     tree = compress_to_power_one(tree)
-    print(f'{colourer('32')}compressed powers{colourer(0)}:         {tree}')
+    print(f'{colourer('33')}compressed powers{colourer(0)}:         {tree}')
+    tree = remove_mult_div_by_one(tree)
+    print(f'{colourer('32')}removed mult/div by one{colourer(0)}:   {tree}')
     #return tree
