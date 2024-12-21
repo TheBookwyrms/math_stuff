@@ -17,7 +17,7 @@ def run():
     ch = o/(th*(x**th))
     ch = (th*(x**t))/(x*x*x*t)
     ch = x**t+x**t+x**t+x**t
-    ch = sec(csc(x**x))
+    #ch = sec(csc(x**x))
     #ch = ln(t)
     #ch = x**(ln(x))
     #ch = o*t+(x**t)
@@ -30,3 +30,4 @@ def run():
     print(f'derived expression:     {t}')
     print(f'compressed expression:  {all_simplifications_and_compressions(t)}')
     print()
+    print(is_equal(x**t+x**t, x**t+x**t))

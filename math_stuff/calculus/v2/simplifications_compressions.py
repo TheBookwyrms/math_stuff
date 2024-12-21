@@ -34,27 +34,6 @@ def delete_Nones(tree: node):
     raise ValueError("error")
 
 
-def compress_duplicate_additions_or_subtractions(tree: node):
-    match tree.length():
-        case 0:
-            return tree
-        case 1:
-            tree = compress_duplicate_additions_or_subtractions(tree)
-            return tree
-        case 2:
-            if (tree.op == operations.operation) and ((tree.arg == 8) or (tree.arg == 9)):
-                new_tree_0 = compress_duplicate_additions_or_subtractions(tree.children[0])
-                new_tree_1 = compress_duplicate_additions_or_subtractions(tree.children[1])
-
-                tree = node(operations.operation, tree.arg, children=(new_tree_0, new_tree_1))
-
-                if is_equal(tree.children[0], tree.children[1]):
-                    two = node(operations.const, 2)
-                    tree = node(operations.operation, operations.mult, children=(two, tree.children[0]))
-            return tree
-    raise ValueError("case error")
-
-
 def is_equal(tree_1: node, tree_2: node):
     length_1 = tree_1.length()
     length_2 = tree_2.length()
@@ -83,8 +62,36 @@ def is_equal(tree_1: node, tree_2: node):
 
     return False
 
+def compress_addition(tree: node):
+    match tree.length():
+        case 0:
+            return tree
+        case 1:
+            tree = compress_addition(tree)
+            return tree
+        case 2:
+            if tree.arg == operations.add:
+                c0 = compress_addition(tree.children[0])
+                c1 = compress_addition(tree.children[1])
+                two = node(operations.const, 2)
+                one = node(operations.const, 1)
+                tree = node(operations.operation, operations.add, children=(c0, c1))
+                if is_equal(c0, c1):
+                    return node(operations.operation, operations.mult, children=(two, c0))
+                if (c1.arg == operations.mult) and (c1.op == operations.operation):
+                    if is_equal(c0, c1.children[0]):
+                        return node(operations.operation, operations.mult, children=(c1.children[1]+one, c0))
+                    elif is_equal(c0, c1.children[1]):
+                        return node(operations.operation, operations.mult, children=(c1.children[0]+one, c0))
+                if (c0.arg == operations.mult) and (c0.op == operations.operation):
+                    if is_equal(c1, c0.children[0]):
+                        return node(operations.operation, operations.mult, children=(c0.children[1]+one, c1))
+                    elif is_equal(c1, c0.children[1]):
+                        return node(operations.operation, operations.mult, children=(c0.children[0]+one, c1))
+    return tree
+
 
 def all_simplifications_and_compressions(tree: node):
     tree = delete_Nones(tree)
-    tree = compress_duplicate_additions_or_subtractions(tree)
+    tree = compress_addition(tree)
     return tree
