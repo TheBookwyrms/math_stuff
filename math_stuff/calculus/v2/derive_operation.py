@@ -91,7 +91,10 @@ def derive_operation(parent: node):
                 u = parent.children
                 u_prime = derive_operation(u)
 
-                div = u_prime/u
+                try:
+                    div = u_prime/u
+                except:
+                    div = node(operations.void, None)
 
                 return div
             case operations.sin:

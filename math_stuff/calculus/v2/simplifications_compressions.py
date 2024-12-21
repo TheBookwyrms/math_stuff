@@ -70,12 +70,12 @@ def compress_addition(tree: node):
             tree = compress_addition(tree)
             return tree
         case 2:
+            c0 = compress_addition(tree.children[0])
+            c1 = compress_addition(tree.children[1])
+            two = node(operations.const, 2)
+            one = node(operations.const, 1)
+            tree = node(operations.operation, tree.arg, children=(c0, c1))
             if tree.arg == operations.add:
-                c0 = compress_addition(tree.children[0])
-                c1 = compress_addition(tree.children[1])
-                two = node(operations.const, 2)
-                one = node(operations.const, 1)
-                tree = node(operations.operation, operations.add, children=(c0, c1))
                 if is_equal(c0, c1):
                     return node(operations.operation, operations.mult, children=(two, c0))
                 if (c1.arg == operations.mult) and (c1.op == operations.operation):
@@ -91,7 +91,107 @@ def compress_addition(tree: node):
     return tree
 
 
-def all_simplifications_and_compressions(tree: node):
-    tree = delete_Nones(tree)
-    tree = compress_addition(tree)
+def compress_subtraction(tree: node):
+    match tree.length():
+        case 0:
+            return tree
+        case 1:
+            tree = compress_subtraction(tree)
+            return tree
+        case 2:
+            c0 = compress_subtraction(tree.children[0])
+            c1 = compress_subtraction(tree.children[1])
+            two = node(operations.const, 2)
+            one = node(operations.const, 1)
+            tree = node(operations.operation, tree.arg, children=(c0, c1))
+            if tree.arg == operations.sub:
+                if is_equal(c0, c1):
+                    return node(operations.operation, operations.mult, children=(two, c0))
+                if (c1.arg == operations.mult) and (c1.op == operations.operation):
+                    if is_equal(c0, c1.children[0]):
+                        return node(operations.operation, operations.mult, children=(c1.children[1]-one, c0))
+                    elif is_equal(c0, c1.children[1]):
+                        return node(operations.operation, operations.mult, children=(c1.children[0]-one, c0))
+                if (c0.arg == operations.mult) and (c0.op == operations.operation):
+                    if is_equal(c1, c0.children[0]):
+                        return node(operations.operation, operations.mult, children=(c0.children[1]-one, c1))
+                    elif is_equal(c1, c0.children[1]):
+                        return node(operations.operation, operations.mult, children=(c0.children[0]-one, c1))
     return tree
+
+def compress_to_power_one(tree: node):
+    match tree.length():
+        case 0:
+            return tree
+        case 1:
+            tree = compress_to_power_one(tree)
+            return tree
+        case 2:
+            child_0 = tree.children[0]
+            child_1 = tree.children[1]
+            child_0 = compress_to_power_one(child_0)
+            child_1 = compress_to_power_one(child_1)
+            tree = node(operations.operation, tree.arg, children=(child_0, child_1))
+
+            if ((child_0.op == operations.operation) and (child_0.arg == operations.pow)) and not ((child_1.op == operations.operation) and (child_1.arg == operations.pow)):
+                if (child_0.children[1].op == operations.const) and (child_0.children[1].arg == 1):
+                    tree = node(operations.operation, tree.arg, children=(child_0.children[0], child_1))
+            elif (child_1.op == operations.operation) and (child_1.arg == operations.pow) and not ((child_0.op == operations.operation) and (child_0.arg == operations.pow)):
+                if (child_1.children[1].op == operations.const) and (child_1.children[1].arg == 1):
+                    tree = node(operations.operation, tree.arg, children=(child_0, child_1.children[0]))
+            elif ((child_0.op == operations.operation) and (child_0.arg == operations.pow)) and ((child_1.op == operations.operation) and (child_1.arg == operations.pow)):
+                if ((child_0.children[1].op == operations.const) and (child_0.children[1].arg == 1)) and not ((child_1.children[1].op == operations.const) and (child_1.children[1].arg == 1)):
+                    tree = node(operations.operation, tree.arg, children=(child_0.children[0], child_1))
+                elif ((child_1.children[1].op == operations.const) and (child_1.children[1].arg == 1)) and not ((child_0.children[1].op == operations.const) and (child_0.children[1].arg == 1)):
+                    tree = node(operations.operation, tree.arg, children=(child_0, child_1.children[0]))
+                elif ((child_1.children[1].op == operations.const) and (child_1.children[1].arg == 1)) and ((child_0.children[1].op == operations.const) and (child_0.children[1].arg == 1)):
+                    tree = node(operations.operation, tree.arg, children=(child_0.children[0], child_1.children[0]))
+            
+    return tree
+
+
+def compress_constants(tree: node):
+    match tree.length():
+            case 0:
+                return tree
+            case 1:
+                tree = compress_addition(tree)
+                return tree
+            case 2:
+                c0 = compress_constants(tree.children[0])
+                c1 = compress_constants(tree.children[1])
+                tree = node(operations.operation, tree.arg, children=(c0, c1))
+                if (c0.op == operations.const) and (c1.op == operations.const):
+                    match tree.arg:
+                        case operations.add:
+                            tree = node(operations.const, c0.arg+c1.arg)
+                            return tree
+                        case operations.sub:
+                            tree = node(operations.const, c0.arg-c1.arg)
+                            return tree
+                        case operations.mult:
+                            tree = node(operations.const, c0.arg*c1.arg)
+                            return tree
+                        case operations.div:
+                            tree = node(operations.const, c0.arg/c1.arg)
+                            return tree
+                        case operations.pow:
+                            tree = node(operations.const, c0.arg**c1.arg)
+                            return tree
+                    raise ValueError("case error")
+    return tree
+
+
+def all_simplifications_and_compressions(tree: node):
+    print(f'{colourer('31')}derived expression{colourer(0)}:        {tree}')
+    tree = delete_Nones(tree)
+    print(f'{colourer('35')}compressed Nones{colourer(0)}:          {tree}')
+    tree = compress_addition(tree)
+    print(f'{colourer('34')}compressed additions{colourer(0)}:      {tree}')
+    tree = compress_subtraction(tree)
+    print(f'{colourer('36')}compressed subtractions{colourer(0)}:   {tree}')
+    tree = compress_constants(tree)
+    print(f'{colourer('33')}compressed constants{colourer(0)}:      {tree}')
+    tree = compress_to_power_one(tree)
+    print(f'{colourer('32')}compressed powers{colourer(0)}:         {tree}')
+    #return tree

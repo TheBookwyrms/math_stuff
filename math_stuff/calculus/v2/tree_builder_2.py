@@ -1,5 +1,8 @@
 import collections
 
+def colourer(colour_code):
+    return f'\033[{colour_code}m'
+
 reverser = {
         8: "+",
         9: "-",
