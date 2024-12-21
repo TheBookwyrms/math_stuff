@@ -16,7 +16,7 @@ def run():
 
     ch = o/(th*(x**th))
     ch = (th*(x**t))/(x*x*x*t)
-    #ch = x**t+x**t+x**t-x**t-x**t+ln(t)+ln(t)+ln(t)
+    ch = x**t+x**t+x**t-x**t-x**t+ln(t)+ln(t)+ln(t)
     #ch = sec(csc(x**x))
     #ch = ln(t)
     #ch = x**(ln(x))
