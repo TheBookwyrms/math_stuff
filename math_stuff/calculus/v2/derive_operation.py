@@ -146,7 +146,7 @@ def derive_operation(parent: node):
             case operations.acot:
                 pass
         raise ValueError(f"non-differentiable operation detected: {reverser[parent.arg]}")
-    elif parent.op == (operations.const or operations.void):
+    elif (parent.op == operations.const) or (parent.op == operations.void):
         a = node(operations.void, None)
         return a
     elif parent.op == operations.var:
