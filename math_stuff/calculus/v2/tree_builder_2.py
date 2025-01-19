@@ -80,6 +80,8 @@ class node:
                 x += 1
         except:
             x = 0
+            if self.op == operations.operation:
+                x=1
         return x
     
 

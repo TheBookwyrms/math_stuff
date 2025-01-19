@@ -1,19 +1,19 @@
 from math_stuff.calculus.v2.tree_builder_2 import *
 
 
-def derive_operation(parent: node):
+def derive_operation(parent: node, with_respect_to="all"):
     if parent.op == operations.operation:
         match parent.arg:
             case operations.add:
-                left = derive_operation(parent.children[0])
-                right = derive_operation(parent.children[1])
+                left = derive_operation(parent.children[0], with_respect_to=with_respect_to)
+                right = derive_operation(parent.children[1], with_respect_to=with_respect_to)
 
                 new_parent = node(operations.operation, operations.add, children=(left, right))
 
                 return new_parent
             case operations.sub:
-                left = derive_operation(parent.children[0])
-                right = derive_operation(parent.children[1])
+                left = derive_operation(parent.children[0], with_respect_to=with_respect_to)
+                right = derive_operation(parent.children[1], with_respect_to=with_respect_to)
 
                 new_parent = node(operations.operation, operations.sub, children=(left, right))
 
@@ -21,8 +21,8 @@ def derive_operation(parent: node):
             case operations.mult:
                 a = parent.children[0]
                 b = parent.children[1]
-                aa = derive_operation(a)
-                bb = derive_operation(b)
+                aa = derive_operation(a, with_respect_to=with_respect_to)
+                bb = derive_operation(b, with_respect_to=with_respect_to)
                 #aa.is_differentiable = True
                 #bb.is_differentiable = True
 
@@ -41,8 +41,8 @@ def derive_operation(parent: node):
             case operations.div:
                 a = parent.children[0]
                 b = parent.children[1]
-                aa = derive_operation(a)
-                bb = derive_operation(b)
+                aa = derive_operation(a, with_respect_to=with_respect_to)
+                bb = derive_operation(b, with_respect_to=with_respect_to)
                 two = node(operations.const, 2)
 
                 top_a = node(operations.operation, operations.mult, children=(aa, b))
@@ -64,7 +64,7 @@ def derive_operation(parent: node):
                     front__power = node(operations.operation, operations.mult
                     , children=(to_the_n, new_base_power))
 
-                    u_prime = derive_operation(u)
+                    u_prime = derive_operation(u, with_respect_to=with_respect_to)
 
                     with_u_prime = node(operations.operation, operations.mult
                     , children=(front__power, u_prime))
@@ -74,11 +74,11 @@ def derive_operation(parent: node):
                     f_x = parent
                     g_x = parent.children[0]
                     h_x = parent.children[1]
-                    g_prime = derive_operation(g_x)
-                    h_prime = derive_operation(h_x)
+                    g_prime = derive_operation(g_x, with_respect_to=with_respect_to)
+                    h_prime = derive_operation(h_x, with_respect_to=with_respect_to)
 
                     ln_g_x = node(operations.operation, operations.ln, children=(g_x))
-                    ln_g_x_prime = derive_operation(ln_g_x)
+                    ln_g_x_prime = derive_operation(ln_g_x, with_respect_to=with_respect_to)
 
                     term_1 = node(operations.operation, operations.mult, children=(h_prime, ln_g_x))
                     term_2 = node(operations.operation, operations.mult, children=(h_x, ln_g_x_prime))
@@ -89,7 +89,7 @@ def derive_operation(parent: node):
                     return final
             case operations.ln:
                 u = parent.children
-                u_prime = derive_operation(u)
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
 
                 try:
                     div = u_prime/u
@@ -99,41 +99,46 @@ def derive_operation(parent: node):
                 return div
             case operations.sin:
                 u = parent.children
-                u_prime = derive_operation(u)
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
                 return cos(u)*u_prime
             
             case operations.cos:
                 u = parent.children
-                u_prime = derive_operation(u)
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
                 minus_one = node(operations.const, -1)
                 return minus_one*sin(u)*u_prime
                 
             case operations.tan:
                 u = parent.children
-                u_prime = derive_operation(u)
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
                 two = node(operations.const, 2)
                 return ((sec(u))**two)*u_prime
             
             case operations.sec:
                 u = parent.children
-                u_prime = derive_operation(u)
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
                 return sec(u)*tan(u)*u_prime
             
             case operations.csc:
                 u = parent.children
-                u_prime = derive_operation(u)
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
                 two = node(operations.const, 2)
                 minus_one = node(operations.const, -1)
                 return minus_one*csc(u)*cot(u)*u_prime
             
             case operations.cot:
                 u = parent.children
-                u_prime = derive_operation(u)
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
                 two = node(operations.const, 2)
                 minus_one = node(operations.const, -1)
                 return minus_one*(csc(u)**two)*u_prime
             
             case operations.asin:
+                u = parent.children
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
+                one = node(operations.const, 1)
+                half = node(operations.const, 0.5)
+                return (one / ((one-(u*u))**half))*u_prime
                 pass
             case operations.acos:
                 pass
@@ -150,11 +155,23 @@ def derive_operation(parent: node):
         a = node(operations.void, None)
         return a
     elif parent.op == operations.var:
-        var_prime = node(operations.var, f"{parent.arg}'")
+        if with_respect_to == "all":
+            var_prime = node(operations.var, f"{parent.arg}'")
 
-        var_var_prime = node(operations.operation, operations.mult,
-        children=(parent, var_prime))
+            var_var_prime = node(operations.operation, operations.mult,
+            children=(parent, var_prime))
 
-        return var_prime
+            return var_prime
+        else:
+            if with_respect_to == parent.arg:
+                var_prime = node(operations.var, f"{parent.arg}'")
+
+                var_var_prime = node(operations.operation, operations.mult,
+                children=(parent, var_prime))
+
+                return var_prime
+            else:
+                return node(operations.void, None)
+
     else:
         pass
