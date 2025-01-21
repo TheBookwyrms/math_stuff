@@ -2,6 +2,8 @@ from math_stuff.calculus.v2.tree_builder_2 import *
 from math_stuff.calculus.v2.derive_operation import *
 from math_stuff.calculus.v2.simplifications_compressions import *
 from math_stuff.calculus.v2.substitute_variables import *
+from math_stuff.calculus.v2.calculate_value import *
+
 
 
 def run():
@@ -50,3 +52,5 @@ def run():
     }
     print(f'{substitute_var_as(t_final, substitutions)}')
     print()
+
+    print(sec(f)+sec(f), "=", calculate_value_of(sec(f)+sec(f)))

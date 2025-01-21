@@ -4,6 +4,10 @@ def colourer(colour_code):
     return f'\033[{colour_code}m'
 
 reverser = {
+        -100: "operation",
+        -7: "void",
+        0: "const",
+        1: "var",
         8: "+",
         9: "-",
         10: "*",
@@ -21,7 +25,7 @@ reverser = {
         33: "atan",
         34: "asec",
         35: "acsc",
-        36: "atan",
+        36: "cot",
         41: "floor",
         42: "ceil",
         45: "abs"}
@@ -132,6 +136,8 @@ class node:
         , children=(self, sibling))
 
         return new_parent
+    
+    
 
 def abs(self):
     new_parent = node(operations.operation, operations.abs

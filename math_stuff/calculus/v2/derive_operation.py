@@ -139,9 +139,15 @@ def derive_operation(parent: node, with_respect_to="all"):
                 one = node(operations.const, 1)
                 half = node(operations.const, 0.5)
                 return (one / ((one-(u*u))**half))*u_prime
-                pass
+
             case operations.acos:
-                pass
+                negative_one = node(operations.const, -1)
+                u = parent.children
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
+                one = node(operations.const, 1)
+                half = node(operations.const, 0.5)
+                return negative_one * (one / ((one-(u*u))**half))*u_prime
+
             case operations.atan:
                 pass
             case operations.asec:
