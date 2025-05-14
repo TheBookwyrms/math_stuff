@@ -1,4 +1,6 @@
-from math_stuff.calculus.v2.derivation_user import *
+from math_stuff.node_class import run
+from math_stuff.derive_tree import run_2
 
 if __name__ == "__main__":
-    run()
+    #run()
+    run_2()

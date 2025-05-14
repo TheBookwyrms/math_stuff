@@ -1,0 +1,11 @@
+implement:
+    tree building
+    
+    operations
+    calculation
+    printing
+        printing operations
+    
+    derivation
+    power series
+    constants

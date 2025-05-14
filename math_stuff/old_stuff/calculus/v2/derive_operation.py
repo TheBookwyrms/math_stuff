@@ -149,13 +149,33 @@ def derive_operation(parent: node, with_respect_to="all"):
                 return negative_one * (one / ((one-(u*u))**half))*u_prime
 
             case operations.atan:
-                pass
+                u = parent.children
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
+                one = node(operations.const, 1)
+                return one / (one + u*u) * u_prime
+
             case operations.asec:
-                pass
+                u = parent.children
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
+                one = node(operations.const, 1)
+                half = node(operations.const, 0.5)
+                return abs(one / (u * (u*u - 1)**half) * u_prime)
+            
             case operations.acsc:
-                pass
+                negative_one = node(operations.const, -1)
+                u = parent.children
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
+                one = node(operations.const, 1)
+                half = node(operations.const, 0.5)
+                return negative_one * abs(one / (u * (u*u - 1)**half) * u_prime)
+            
             case operations.acot:
-                pass
+                negative_one = node(operations.const, -1)
+                u = parent.children
+                u_prime = derive_operation(u, with_respect_to=with_respect_to)
+                one = node(operations.const, 1)
+                return negative_one * one / (one + u*u) * u_prime
+
         raise ValueError(f"non-differentiable operation detected: {reverser[parent.arg]}")
     elif (parent.op == operations.const) or (parent.op == operations.void):
         a = node(operations.void, None)

@@ -25,7 +25,7 @@ reverser = {
         33: "atan",
         34: "asec",
         35: "acsc",
-        36: "cot",
+        36: "acot",
         41: "floor",
         42: "ceil",
         45: "abs"}

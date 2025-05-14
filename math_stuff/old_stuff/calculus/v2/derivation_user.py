@@ -44,13 +44,36 @@ def run():
     print(f'{colourer('34')}simplified expression{colourer(0)}:  {t_final}')
 
     print()
-    substitutions = {
-        "x" : 15,
-        "y" : -2.438,
-        "y'" : 0,
-        "x'" : "y'",
-    }
-    print(f'{substitute_var_as(t_final, substitutions)}')
+    #substitutions = {
+    #    "x" : 15,
+    #    "y" : -2.438,
+    #    "y'" : 0,
+    #    "x'" : "y'",
+    #}
+    #print(f'{substitute_var_as(t_final, substitutions)}')
     print()
 
-    print(sec(f)+sec(f), "=", calculate_value_of(sec(f)+sec(f)))
+
+    print(sec(f)+csc(f), "=", calculate_value_of(sec(f)+csc(f)))
+
+
+def ben():
+    e = node(operations.const, 2.71828)
+    one = node(operations.const, 1)
+    x = node(operations.var, "x")
+    ten = node(operations.const, 10)
+    half = node(operations.const, 0.5)
+
+    f_of_x = (sin(x)+one)**x
+
+    #f_of_x = e**(sin(atan(x**half)))
+    #print(f_of_x)
+
+    f_prime = derive_operation(f_of_x, with_respect_to="x")
+    #print(f_prime)
+    s_f = all_simplifications_and_compressions(f_prime)
+    #print(s_f)
+
+    f_p_of_10 = substitute_var_as(s_f, {"x": 3*3.14159/2, "x'":1})
+
+    print(f_p_of_10)
