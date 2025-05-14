@@ -1,11 +1,20 @@
 implement:
     tree building
     
-    operations
-    calculation
-    printing
-        printing operations
+    DONE operations
+    DONE printing
+    DONE     printing operations
+    DONE derivation
+
     
-    derivation
+    calculate values
+    simplifications
+        division of two fractions
+        multiply by 1/divisor
+        turn division into multiplication by (k)^-1
+        turn multiple addition into multiplication
+        trig identities ?
+            as in: if node is_equal to 1-sin^2 or others, substitute in cos^2 (or other relevant)
+        turn multiple multiplications into exponentiation
     power series
-    constants
+    fill in constants class

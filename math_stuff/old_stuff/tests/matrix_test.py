@@ -15,8 +15,38 @@ prediction = np.array([[1*4+2*7+3*1, 1*3+2*8+3*6, 1*5+2*9+3*2],
 
 c = a@b
 
-print(a)
-print(b)
-print(a+b)
-print(c)
-print(c/prediction)
+#print(a)
+#print(b)
+#print(a+b)
+#print(c)
+#print(c/prediction)
+
+
+
+m = np.array([
+        [1,2,3],
+        [5,7,11],
+    ])
+
+print(m, m.shape, m.T.shape)
+mte = np.array([
+    [1,   1],
+    [0,  1],
+    [0,  -1],
+])
+print(mte)
+print(m@mte)
+#print(m@(np.linalg.inv(m)))
+
+mt = m.T
+m_left_inverse = mt @ np.linalg.inv(m@mt)
+print(m_left_inverse)
+print(m@m_left_inverse)
+
+#print(n, n.shape, n.T.shape)
+#print(m@n)
+#print(n@m)
+#print(m@(m.T))
+#print(n@(n.T))
+#print(m@(m.T)@np.eye(2))
+#print(n@(n.T)@np.eye(3))

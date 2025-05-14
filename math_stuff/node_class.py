@@ -109,7 +109,7 @@ class Node:
                 if len(self.children) == 1:
                     return f'{operations_to_symbol[self.value]}({str(self.children[0])})'
                 elif len(self.children) == 2:
-                    return f'({str(self.children[0])}){operations_to_symbol[self.value]}({str(self.children[1])})'
+                    return f'({str(self.children[0])}{operations_to_symbol[self.value]}{str(self.children[1])})'
                 else:
                     raise ChildrenException(f'''operation type {self.value}
                                             should not have {len(self.children)} children''')
@@ -197,6 +197,30 @@ class Node:
             else:
                 k = Node(subtypes.OPERATION, operations.MULTIPLY, children=(c0, c1))
                 return k
+            
+    def sub_variables(self, substitutions:dict):
+        new_children = []
+        for child in self.children:
+            new_children.append(child.sub_variables(substitutions))
+        
+        if self.subtype == subtypes.VAR:
+            if self.value in substitutions:
+                new_value = substitutions[self.value]
+
+                if type(new_value) == str:
+                    return Node(subtypes.VAR, new_value)
+                elif new_value == None:
+                    return Node(subtypes.NULL, new_value)
+                elif type(new_value) == Node:
+                    return new_value
+                elif type(new_value) == Constant:
+                    return Node(subtypes.CONSTANT, new_value)
+                else:
+                    return Node(subtypes.NUMBER, new_value)
+            else:
+                return Node(subtypes.VAR, self.value)
+        else:
+            return Node(self.subtype, self.value, children=tuple(new_children))
 
 def log10(self:Node):
     return Node(subtypes.OPERATION, operations.LOG10, children=as_Node(self))

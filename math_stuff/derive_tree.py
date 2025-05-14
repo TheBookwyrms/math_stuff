@@ -1,4 +1,4 @@
-from math_stuff.node_class import Node, subtypes, SubtypeException, operations, ChildrenException
+from math_stuff.node_class import *
 
 class DifferentiabilityException(Exception):
     def __init__(self, *args):
@@ -63,49 +63,129 @@ def derive_tree(tree:Node):
                 raise DifferentiabilityException(f"operation {tree.value} is not differentiable")
             
             case operations.POWER:
-                pass
+                f = tree
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                h = tree.children[1]
+                h_prime = derive_tree(h)
+
+                '''
+                f = g**h
+                ln(f) = h*ln(g)
+                f'/f = h'*ln(g) + h*g'/g
+                f'(x) = f(x) * (h'(x) * ln(g(x)) + h(x) * g'(x) / g(x))
+                '''
+
+                f_prime = f * ((h_prime * ln(g)) + (h * g_prime / g))
+
+                return f_prime
             
             case operations.LOG10:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                ten = Node(subtypes.NUMBER, 10)
+
+                return g_prime / (g * ln(ten))
             
             case operations.LN:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+
+                return g_prime / g
             
             case operations.SIN:
-                pass
-            
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+
+                return cos(g)*g_prime
+
             case operations.COS:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                negative_one = Node(subtypes.NUMBER, -1)
+
+                return negative_one*sin(g)*g_prime
             
             case operations.TAN:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                two = Node(subtypes.NUMBER, 2)
+
+                return (sec(g)**two) * g_prime
             
             case operations.CSC:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                negative_one = Node(subtypes.NUMBER, -1)
+
+                return negative_one * csc(g) * cot(g) * g_prime
             
             case operations.SEC:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+
+                return sec(g) * tan(g) * g_prime
             
             case operations.COT:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                two = Node(subtypes.NUMBER, 2)
+                negative_one = Node(subtypes.NUMBER, -1)
+
+                return negative_one * (csc(g)**two) * g_prime
             
             case operations.ARCSIN:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                one = Node(subtypes.NUMBER, 1)
+                half = Node(subtypes.NUMBER, 0.5)
+                two = Node(subtypes.NUMBER, 2)
+
+                return g_prime / ((one - g**two)**half)
             
             case operations.ARCCOS:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                one = Node(subtypes.NUMBER, 1)
+                half = Node(subtypes.NUMBER, 0.5)
+                two = Node(subtypes.NUMBER, 2)
+                negative_one = Node(subtypes.NUMBER, -1)
+
+                return negative_one * g_prime / ((one - g**two)**half)
             
             case operations.ARCTAN:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                one = Node(subtypes.NUMBER, 1)
+                two = Node(subtypes.NUMBER, 2)
+
+                return g_prime / (one + g**two)
             
             case operations.ARCCSC:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                one = Node(subtypes.NUMBER, 1)
+                two = Node(subtypes.NUMBER, 2)
+                negative_one = Node(subtypes.NUMBER, -1)
+
+                return negative_one * g_prime / (abs(g) * (g**two - 1)**half)
             
             case operations.ARCSEC:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                one = Node(subtypes.NUMBER, 1)
+                two = Node(subtypes.NUMBER, 2)
+
+                return g_prime / (abs(g) * (g**two - 1)**half)
             
             case operations.ARCCOT:
-                pass
+                g = tree.children[0]
+                g_prime = derive_tree(g)
+                one = Node(subtypes.NUMBER, 1)
+                two = Node(subtypes.NUMBER, 2)
+                negative_one = Node(subtypes.NUMBER, -1)
+
+                return negative_one * g_prime / (one + g**two)
             
             case operations.ABS:
                 raise DifferentiabilityException(f"operation {tree.value} is not differentiable")
@@ -131,16 +211,30 @@ def run_2():
     test = five+x+14
     m_test = x*y*z*a*b*c
     a2 = x+y+z+a+b+c
-    print(a2.simplify_multiple_additions())
-    mt2 = m_test.simplify_multiple_multiplications()
-    mt4 = derive_tree(mt2)
 
-    print(derive_tree(five), derive_tree(x))
-    print(derive_tree(test).simplify_multiple_additions())
-    print()
-    print(m_test)
-    print(mt2)
-    print(mt4)
+    a3 = ((x**y) * (a*b))
+    a4 = tan(a3)
+    #print("   ", a3)
+    #print(a4)
+    #print("                           ", derive_tree(a3))
+    #print(derive_tree(a4))
+
+    #print(a2.simplify_multiple_additions())
+    #mt2 = m_test.simplify_multiple_multiplications()
+    #mt4 = derive_tree(mt2)
+
+    subs_dict = {
+        "a":5,
+    }
+    print(a4)
+    print(a4.sub_variables(subs_dict))
+
+    #print(derive_tree(five), derive_tree(x))
+    #print(derive_tree(test).simplify_multiple_additions())
+    #print()
+    #print(m_test)
+    #print(mt2)
+    #print(mt4)
 
 
 if __name__ == "__main__":

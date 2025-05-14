@@ -15,9 +15,15 @@ def absolute_value(x):
     return x
 
 def factorial(x):
+
+    # NOTE : 0! should = 1
+
     x = x
     y = x
     while x >1:
         y = y * (x-1)
         x -= 1
     return y
+
+for i in range(10):
+    print(factorial(i))
