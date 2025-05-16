@@ -26,12 +26,50 @@ class Sequence:
 
         return tuple(terms)
 
+        def find_limit(self):
+            pass
+
 def run_3():
 
     n = Node(subtypes.VAR, "n")
+    k = Node(subtypes.VAR, "n")
     b = Node(subtypes.VAR, "b")
     two = Node(subtypes.NUMBER, 2)
     an = tan(two*n*b)
     sq = Sequence(an, n.value)
     terms = sq.get_n_terms(5)
     print(tuple([str(t) for t in terms]))
+    #print(an.simplify(), an.simplify_multiple_multiplications())
+
+    sn = (n+n+n+n+n+n+n+n)
+    #sn2 = sn.simplify()
+    #print(sn)
+    #print(sn2)
+    #print(tan(2+2), tan(2+2).simplify())
+
+    m = ((n-b+n-two+two)-n-n+two-two+(two-b-b+n+n)-(b-b+two)+two+two-(b+b+b)-n+n-two)-two-two-n
+    #m = two-two-n
+    #m = ((n-b+n-two+two)-n-n+two-two+(two-b-b+n+n)-(b-b+two)+two+two-(b+b+b)-n+n-two)
+    #m = (b-n) - (b-two) - (two - two)
+    ms = m.compress_multiple_subtractions()
+    print(m)
+    print(ms)
+    ms2 = ms.simplify_multiple_additions()
+    print(ms2)
+    ms3 = ms2.compress_add_subtract()
+    print("ms3", ms3)
+    ms4 = ms3.simplify_multiple_additions()
+    print("ms4", ms4)
+    ms5 = ms4.compress_add_subtract()
+    print("ms5", ms5)
+    ms6 = ms5.simplify_multiple_additions()
+    print("ms6", ms6)
+
+    print()
+    mss = m.simplify()
+    print("mss", mss)
+    #k = Node(subtypes.NUMBER, 2)
+    #m = Node(k.subtype, k.value)
+    #print(m == k, m is k)
+    #k.value = 4
+    #print(m == k, m is k, m.value)

@@ -152,10 +152,26 @@ class Node:
             new_children.append(child.simplify_multiple_additions())
 
         if not ((self.subtype == subtypes.OPERATION) and (self.value == operations.ADD)):
-            return Node(self.subtype, self.value, children=new_children)
+            return Node(self.subtype, self.value, children=tuple(new_children))
         else:
+
+            is_add = lambda x : ((x.subtype == subtypes.OPERATION) and (x.value == operations.ADD))
+            new_is_add = []
+            for child in new_children:
+                new_is_add.append(is_add(child))
+
+            children_for_return = []
+            for child, add in zip(new_children, new_is_add):
+                if add:
+                    children_for_return.extend([*child.children])
+                else:
+                    children_for_return.append(child)
+
+            return Node(subtypes.OPERATION, operations.ADD, children=tuple(children_for_return))
+
+
             c0 = new_children[0]
-            c1 = new_children[1]
+            c1 = new_children[2]
 
             c0_add = ((c0.subtype == subtypes.OPERATION) and (c0.value == operations.ADD))
             c1_add = ((c1.subtype == subtypes.OPERATION) and (c1.value == operations.ADD))
@@ -175,7 +191,7 @@ class Node:
             new_children.append(child.simplify_multiple_multiplications())
 
         if not ((self.subtype == subtypes.OPERATION) and (self.value == operations.MULTIPLY)):
-            return Node(self.subtype, self.value, children=self.children)
+            return Node(self.subtype, self.value, children=tuple(new_children))
         else:
             #print(new_children[0])
             c0 = new_children[0]
@@ -197,6 +213,195 @@ class Node:
             else:
                 k = Node(subtypes.OPERATION, operations.MULTIPLY, children=(c0, c1))
                 return k
+            
+    def __eq__(self, sibling):
+        if type(sibling) != Node:
+            return False
+
+        if self.subtype == sibling.subtype:
+            if self.value == sibling.value:
+                if len(self.children) == len(sibling.children):
+                    if len(self.children) == 0:
+                    #if len(self.children):
+                        return True
+                    else:
+                        c0_in_c1 = []
+                        for c0 in self.children:
+                            for c1 in sibling.children:
+                                if c0==c1:
+                                    c0_in_c1.append(True)
+                                    c0=[None,]
+                            if c0 != [None,]:
+                                c0_in_c1.append(False)
+                        if all(c0_in_c1):
+                            return True
+                        
+        return False
+
+            
+    def compress_multiple_additions(self):
+        new_children = []
+        for child in self.children:
+            new_children.append(child.compress_multiple_additions())
+
+        if not ((self.subtype == subtypes.OPERATION) and (self.value == operations.ADD)):
+            return Node(self.subtype, self.value, children=tuple(new_children))
+        else:
+            unique_terms = []
+            num_appearances = []
+            for child in new_children:
+                child_in_terms = False
+                for item in unique_terms:
+                    if child == item:
+                        child_in_terms = True
+                if child_in_terms:
+                    index = ""
+                    for i, j in enumerate(unique_terms):
+                        if j == child:
+                            index = i
+                    num_appearances[index] += 1
+                else:
+                    unique_terms.append(child)
+                    num_appearances.append(1)
+            
+            final_terms = []
+            for term, i in zip(unique_terms, num_appearances):
+                if i != 1:
+                    num = Node(subtypes.NUMBER, i)
+                    compressed = Node(subtypes.OPERATION, operations.MULTIPLY, children=(num, term))
+                else:
+                    compressed = term
+                final_terms.append(compressed)
+            
+            return Node(subtypes.OPERATION, operations.ADD, children=(tuple(final_terms)))
+        
+
+    def compress_multiple_subtractions(self):
+        new_children = []
+        for child in self.children:
+            new_children.append(child.compress_multiple_subtractions())
+
+        if not ((self.subtype == subtypes.OPERATION) and (self.value == operations.SUBTRACT)):
+            return Node(self.subtype, self.value, children=tuple(new_children))
+        else:
+            c0 = new_children[0]
+            c1 = new_children[1]
+
+            c0_is_sub = ((c0.subtype == subtypes.OPERATION) and (c0.value == operations.SUBTRACT))
+            c1_is_sub = ((c1.subtype == subtypes.OPERATION) and (c1.value == operations.SUBTRACT))
+
+            if c0_is_sub and c1_is_sub:
+                # (a-b) - (c-d) = a-b-c+d = (a+d)-(c+d)
+                a = c0.children[0]
+                b = c0.children[1]
+                c = c1.children[0]
+                d = c1.children[1]
+                left = Node(subtypes.OPERATION, operations.ADD, children=(a, d))
+                right = Node(subtypes.OPERATION, operations.ADD, children=(b, c))
+                return Node(subtypes.OPERATION, operations.SUBTRACT, children=(left, right))
+
+            elif c0_is_sub and (not c1_is_sub):
+                # (a-b) - (c) = a-b-c = a - (b+c)
+                a = c0.children[0]
+                b = c0.children[1]
+                c = c1
+                left = a
+                right = Node(subtypes.OPERATION, operations.ADD, children=(b, c))
+                return Node(subtypes.OPERATION, operations.SUBTRACT, children=(left, right))
+
+            elif (not c0_is_sub) and c1_is_sub:
+                # (a) - (b-c) = a-b+c = (a+c) - b
+                a = c0
+                b = c1.children[0]
+                c = c1.children[1]
+                left = Node(subtypes.OPERATION, operations.ADD, children=(a, c))
+                right = b
+                return Node(subtypes.OPERATION, operations.SUBTRACT, children=(left, right))
+
+            else:
+                # (a) - (b) = a-b
+                return Node(subtypes.OPERATION, operations.SUBTRACT, children=tuple(new_children))
+            
+
+    def compress_add_subtract(self):
+        new_children = []
+        for child in self.children:
+            new_children.append(child.compress_add_subtract())
+
+        is_add = ((self.subtype == subtypes.OPERATION) and (self.value == operations.ADD))
+        is_sub = lambda x : ((x.subtype == subtypes.OPERATION) and (x.value == operations.SUBTRACT))
+
+        if not is_add:
+            return Node(self.subtype, self.value, children=tuple(new_children))
+        else:
+            # for :
+            #    (-) + (-)
+            #    (+) + (-)
+            #    (-) + (+)
+            subtractions = []
+            others = []
+            for child in new_children:
+                if is_sub(child) :
+                    subtractions.append(child)
+                else:
+                    others.append(child)
+
+            if subtractions != []:
+                sub_first_terms = []
+                sub_second_terms = []
+                for sub in subtractions:
+                    sub_first_terms.append(sub.children[0])
+                    sub_second_terms.append(sub.children[1])
+
+
+                additions = others + sub_first_terms
+
+                left = Node(subtypes.OPERATION, operations.ADD, children=tuple(additions))
+
+                if len(sub_second_terms) > 1:
+                    right = Node(subtypes.OPERATION, operations.ADD, children=tuple(sub_second_terms))
+                else:
+                    right = sub_second_terms[0]
+
+                return Node(subtypes.OPERATION, operations.SUBTRACT, children=(left, right))
+            else:
+                return Node(subtypes.OPERATION, operations.ADD, children=tuple(others))
+
+
+
+
+
+
+        
+
+
+
+            
+    def simplify(self):
+
+        original = 0
+        n_times = 0
+
+        print("org", self)
+
+
+        while original != self:
+
+            original = Node(self.subtype, self.value, self.children)
+            
+            self = self.compress_multiple_subtractions()
+
+            self = self.simplify_multiple_additions() # puts continuous additions into a single parent
+            self = self.compress_add_subtract()
+        
+        print("a-s", self)
+        self = self.compress_multiple_additions() # puts duplicates into multiplications
+        self = self.simplify_multiple_multiplications() # puts multiple multiplications into a single parent
+            #n_times += 1
+            #print(original is self)
+        #print("n_times", n_times)
+
+        return self
             
     def sub_variables(self, substitutions:dict):
         new_children = []

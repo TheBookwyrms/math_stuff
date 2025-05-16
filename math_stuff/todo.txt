@@ -9,6 +9,7 @@ implement:
     
     calculate values
     simplifications
+        tons of subtraction stuff
         division of two fractions
         multiply by 1/divisor
         turn division into multiplication by (k)^-1
@@ -18,3 +19,4 @@ implement:
         turn multiple multiplications into exponentiation
     power series
     fill in constants class
+    make imgui window for usage
